@@ -20,11 +20,13 @@ import { GetUser } from './decorators/getuser.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // Endpoint for user registration
   @Post('registeration')
   registeration(@Body() registerUserDto: RegisterUserDto) {
     return this.authService.registration(registerUserDto);
   }
 
+  // Endpoint for user login, protected by JWT authentication
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -32,6 +34,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  // Endpoint for changing user password, protected by JWT authentication
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   @Post('changepassword')
@@ -42,6 +45,7 @@ export class AuthController {
     return this.authService.changePassword(changePasswordDto, userId);
   }
 
+  // Endpoint for handling forgot password requests
   @HttpCode(HttpStatus.OK)
   @Post('forgotPassword')
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {

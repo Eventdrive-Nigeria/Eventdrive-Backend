@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
+// Define the type for the UserDocument, a hydrated mongoose document with User schema
 export type UserDocument = HydratedDocument<User>;
 
+// Define the mongoose schema for the User entity
 @Schema({ timestamps: true })
 export class User {
   @Prop()
