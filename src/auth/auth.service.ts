@@ -88,10 +88,11 @@ export class AuthService {
           userId: user._id,
           name: user.userName,
         },
-        { expiresIn: '7d' },
+       { expiresIn: '7d' },
       );
 
       return { token };
+      
     } catch (error) {
       // Handle login errors
       if (error.message && error.status) {
