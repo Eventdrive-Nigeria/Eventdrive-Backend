@@ -12,7 +12,7 @@ import { CreateEventDto } from './dto/createevent.dto';
 
 @Controller('vendor')
 export class VendorController {
-  constructor(private readonly vendorService: VendorService) { }
+  constructor(private vendorService: VendorService) { }
 
   @Get()
   getEvents() {
@@ -20,7 +20,7 @@ export class VendorController {
   }
   @Get(':id')
   getEvent(@Param('id') id: string) {
-    return this.vendorService.getEvent(+id);
+    return this.vendorService.getEvent(id);
   }
   @Post()
   createEvent(@Body() eventData: CreateEventDto) {
@@ -28,10 +28,10 @@ export class VendorController {
   }
   @Patch(':id')
   updateEvent(@Param('id') id: string, @Body() eventData: CreateEventDto) {
-    return this.vendorService.updateEvent(+id, eventData);
+    return this.vendorService.updateEvent(id, eventData);
   }
   @Delete(':id')
   deleteEvent(@Param('id') id: string) {
-    return this.vendorService.deleteEvent(+id);
+    return this.vendorService.deleteEvent(id);
   }
 }

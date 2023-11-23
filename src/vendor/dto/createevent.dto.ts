@@ -1,4 +1,10 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
 export class CreateEventDto {
   @IsString()
@@ -17,12 +23,12 @@ export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
   phoneNumber: string;
-  media: 'picture' | 'video';
+
+  @IsArray()
+  media: string;
   @IsString()
   @IsNotEmpty()
   password: string;
-  @IsEnum(['activated', 'suspended'], {
-    message: 'vendor can be either activated or suspended',
-  })
-  status: string;
+
+  status?: string;
 }

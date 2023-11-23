@@ -1,68 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEventDto } from './dto/createevent.dto';
-
+import * as bcrypt from 'bcrypt';
+import { InjectModel } from '@nestjs/mongoose';
+import { Vendor } from './schemas/vendor.schema';
+import { Model } from 'mongoose';
 @Injectable()
 export class VendorService {
-  private vendors = [
-    {
-      id: 1,
-      eventCenterName: 'peace-Camp',
-      eventCenterAddress: 'downTown',
-      eventCenterDescription: 'downTown',
-      email: 'abc@gmail.com',
-      phoneNumber: '1234',
-      media: '123.jpeg',
-      password: 'abc123',
-      status: 'activated',
-    },
-    {
-      id: 2,
-      eventCenterName: 'violence-Camp',
-      eventCenterAddress: 'upTown',
-      eventCenterDescription: 'upTown',
-      email: 'def@gmail.com',
-      phoneNumber: '5678',
-      media: '456.mp4',
-      password: 'def456',
-      status: 'suspended',
-    },
-  ];
-  getEvents() {
-    return this.vendors;
-  }
+  constructor(@InjectModel(Vendor.name) private vendorModel: Model<Vendor>) { }
 
-  getEvent(id: number) {
-    const vendor = this.vendors.find((vendor) => vendor.id === id);
-    if (!vendor) {
-      throw new Error('Event not found');
-    }
-
-    return vendor;
-  }
-
-  createEvent(createdEvent: CreateEventDto) {
-    const vendor = {
-      id: Date.now(),
-      ...createdEvent,
-    };
-    this.vendors.push(vendor);
-
-    return vendor;
-  }
-
-  updateEvent(id: number, updatedEvent: CreateEventDto) {
-    this.vendors = this.vendors.map((vendor) => {
-      if (vendor.id === id) {
-        return { ...vendor, ...updatedEvent };
+  async getEvents() {
+    try {
+      const vendors = await this.vendorModel.find({});
+      if (vendors.length <= 0) {
+        return 'nothing has been created yet';
       }
-      return vendor;
-    });
-    return this.getEvent(id);
+      return vendors;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 
-  deleteEvent(id: number) {
-    const vendor = this.getEvent(id);
-    this.vendors = this.vendors.filter((vendor) => vendor.id != id);
-    return { vendor };
+  async getEvent(id: string) {
+    try {
+      const vendor = await this.vendorModel.findById(id);
+
+      if (!vendor) {
+        return 'cannot find any data with the specified id';
+      }
+
+      return vendor;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async createEvent(createdEvent: CreateEventDto) {
+    try {
+      // Hash the user's password before storing it in the database
+      const saltOrRounds = 10;
+      const hashedPassword = await bcrypt.hash(
+        createdEvent.password,
+        saltOrRounds,
+      );
+
+      const media = createdEvent.media;
+
+      console.log(media, createdEvent.media);
+
+      // Create a new user with the hashed password
+      const vendor = await this.vendorModel.create({
+        ...createdEvent,
+        password: hashedPassword,
+        media,
+      });
+
+      return vendor;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async updateEvent(id: string, updatedEvent: CreateEventDto) {
+    const vendor = await this.vendorModel.findByIdAndUpdate(
+      { _id: id },
+      { ...updatedEvent },
+    );
+
+    return vendor;
+  }
+
+  async deleteEvent(id: string) {
+    const vendor = await this.vendorModel.findByIdAndDelete({ _id: id });
+
+    return vendor;
   }
 }
