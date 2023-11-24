@@ -6,7 +6,7 @@ import { Vendor } from './schemas/vendor.schema';
 import { Model } from 'mongoose';
 @Injectable()
 export class VendorService {
-  constructor(@InjectModel(Vendor.name) private vendorModel: Model<Vendor>) { }
+  constructor(@InjectModel(Vendor.name) private vendorModel: Model<Vendor>) {}
 
   async getEvents() {
     try {

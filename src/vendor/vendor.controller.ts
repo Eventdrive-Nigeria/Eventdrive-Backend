@@ -12,7 +12,7 @@ import { CreateEventDto } from './dto/createevent.dto';
 
 @Controller('vendor')
 export class VendorController {
-  constructor(private vendorService: VendorService) { }
+  constructor(private vendorService: VendorService) {}
 
   @Get()
   getEvents() {
