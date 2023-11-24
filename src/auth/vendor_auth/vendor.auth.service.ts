@@ -69,6 +69,7 @@ export class Vendor_Auth_Service {
     }
   }
 
+  //to keep trace of currect logged in vendor, use also
   async generatejwt(id: string) {
     try {
       const vendor = await this.vendorModel.findById(id);
