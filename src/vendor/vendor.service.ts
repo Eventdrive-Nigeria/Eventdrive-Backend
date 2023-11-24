@@ -23,7 +23,7 @@ export class VendorService {
 
   async getEvent(id: string) {
     try {
-      const vendor = await this.vendorModel.findById(id);
+      const vendor = await this.vendorModel.findById({ _id: id });
 
       if (!vendor) {
         return 'cannot find any data with the specified id';
