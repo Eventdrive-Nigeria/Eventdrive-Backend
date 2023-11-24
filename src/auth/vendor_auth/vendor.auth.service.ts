@@ -34,7 +34,7 @@ export class Vendor_Auth_Service {
         ...input
       });
 
-      return await createVendor.save();
+        return await createVendor.save();
     } catch (error) {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
