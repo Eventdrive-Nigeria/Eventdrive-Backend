@@ -14,8 +14,15 @@ export class Vendor{
     email: string;
     @Prop()
     password: string;
-    @Prop({default: 'active'})
+    @Prop({default: 'activated'})
     status: string
+
+    @Prop({default: true})
+    resetToken: string;
+
+    @Prop({type: Date, default: true})
+    resetTokenExpiration: Date;
+
     @Prop({type: Date, default: Date.now})
     date: Date
 }
