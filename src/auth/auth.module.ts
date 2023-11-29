@@ -7,8 +7,8 @@ import { User, UserSchema } from './schemas';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { Vendor_Auth_Service } from './vendor_auth/vendor.auth.service';
-import { Vendor, vendorSchema } from './vendor_auth/model/vendor.schema';
+import { Vendor, vendorSchema } from 'src/vendor/model/vendor.schema';
+import { VendorService } from 'src/vendor/vendor.service';
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { Vendor, vendorSchema } from './vendor_auth/model/vendor.schema';
   controllers: [AuthController],
 
   // Declare AuthService and JwtStrategy as providers within this module
-  providers: [AuthService, JwtStrategy, Vendor_Auth_Service],
+  providers: [AuthService, JwtStrategy, VendorService],
 
   // Export AuthService, JwtStrategy, and PassportModule for external usage
   exports: [AuthService, JwtStrategy, PassportModule],

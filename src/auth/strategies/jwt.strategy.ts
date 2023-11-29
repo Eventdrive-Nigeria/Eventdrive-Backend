@@ -4,16 +4,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { User } from '../schemas';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Vendor_Auth_Service } from '../vendor_auth/vendor.auth.service';
 import * as dotenv from 'dotenv';
-import { JwtPayload } from '../common/jwt.interface';
+import { VendorService } from 'src/vendor/vendor.service';
 dotenv.config()
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(@InjectModel(User.name)
   private userModel: Model<User>,
-  private vendorService: Vendor_Auth_Service
+  private vendorService: VendorService
   
   ) {
     // Initialize the JWT strategy with configuration options

@@ -3,12 +3,12 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Vendor } from "./model/vendor.schema";
 import { Model } from "mongoose";
 import { CreateVendor } from "./dto/cretateVendor.dto";
-import { hashed } from "../hashedPassword/password.hashed";
 import { LoginVendorDto } from "./dto/login.dto";
 import { JwtService } from "@nestjs/jwt";
+import { hashed } from "src/auth/hashedPassword/password.hashed";
 
 @Injectable()
-export class Vendor_Auth_Service {
+export class VendorService {
   constructor(
     @InjectModel(Vendor.name)
     private vendorModel: Model<Vendor>,

@@ -16,16 +16,15 @@ import {
 } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './decorators/getuser.decorator';
-import { Vendor_Auth_Service } from './vendor_auth/vendor.auth.service';
-import { CreateVendor } from './vendor_auth/dto/cretateVendor.dto';
-import { LoginVendorDto } from './vendor_auth/dto/login.dto';
-import { Vendor } from './vendor_auth/model/vendor.schema';
+import { VendorService } from 'src/vendor/vendor.service';
+import { CreateVendor } from 'src/vendor/dto/cretateVendor.dto';
+import { LoginVendorDto } from 'src/vendor/dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private vendorAuthService: Vendor_Auth_Service
+    private vendorAuthService: VendorService
     
     ) {}
 
