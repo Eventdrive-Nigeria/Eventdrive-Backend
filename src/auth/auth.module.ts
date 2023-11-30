@@ -9,6 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Vendor, vendorSchema } from 'src/vendor/model/vendor.schema';
 import { VendorService } from 'src/vendor/vendor.service';
+import { EmailController } from './email_auth/email.controller';
+import { EmailService } from './email_auth/email.service';
 
 @Module({
   imports: [
@@ -40,10 +42,10 @@ import { VendorService } from 'src/vendor/vendor.service';
   ],
 
   // Declare the AuthController as a part of this module
-  controllers: [AuthController],
+  controllers: [AuthController, EmailController],
 
   // Declare AuthService and JwtStrategy as providers within this module
-  providers: [AuthService, JwtStrategy, VendorService],
+  providers: [AuthService, JwtStrategy, VendorService, EmailService],
 
   // Export AuthService, JwtStrategy, and PassportModule for external usage
   exports: [AuthService, JwtStrategy, PassportModule],
