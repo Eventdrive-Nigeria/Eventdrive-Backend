@@ -6,6 +6,9 @@ import { ForgetEmailDto } from './dto/forgetemail.dto';
 import * as crypto from'crypto'
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
+import { ResetPasswordDTO } from './dto/resetpasword.dto';
+import { hashed } from '../hashedPassword/password.hashed';
+import { confirmedVendorEmailDTO } from './dto/confirmedvendor.email.dto';
 //import { NodeMailer } from 'src/common/nodemail';
 
 @Injectable()
@@ -31,6 +34,58 @@ export class EmailService {
             }
           });
     }
+
+    ///logic to send token to confirmed vendor that sign up account
+    async sendVendorConfirmation(input: Vendor){
+
+      const vendor = await this.vendorModel.findOne({email: input.email})
+      // const emailtoken = Math.floor(1000 + Math.random() * 9000).toString();
+      const emailtoken =crypto.randomBytes(8).toString('hex');
+      const emailtTokenExpirationTime = new Date()
+      emailtTokenExpirationTime.setDate(emailtTokenExpirationTime.getDate()+ 1);
+      
+      console.log(emailtoken)
+
+      vendor.emailConfirmedToken = emailtoken
+      vendor.emailTokenExpiration = emailtTokenExpirationTime;
+
+      await vendor.save()
+
+      const sendmail={
+          from: 'infor@eventdrive.com',
+          to: vendor.email,
+          subject: 'confirmed your email',
+          Text: `Click the following link to reset your password: https://yourwebsite.com/reset-password?token=${emailtoken}`
+      }
+      try {
+          const info = await this.transporter.sendMail(sendmail);
+          return info;
+        } catch (error) {
+          throw new Error(error.message);
+        }  
+     
+  }
+
+  //vendor confirm email 
+  async confirmedVendorEmail(input: confirmedVendorEmailDTO) {
+    const vendor  = await this.vendorModel.findOne({email: input.email})
+    if (!vendor) {
+        throw new HttpException('please check your email address', HttpStatus.NOT_FOUND)
+    }
+    if (vendor.emailConfirmedToken !== input.confirmedToken || vendor.emailTokenExpiration< new Date()) {
+        throw new HttpException('wrong credential or token has expired', HttpStatus.UNPROCESSABLE_ENTITY)
+    }
+    vendor.emailConfirmed = true;
+    vendor.emailConfirmedToken = null;
+    vendor.emailTokenExpiration = null;
+
+    await vendor.save()
+
+    return {
+        info: 'you are now verified'
+    }
+ }
+
 //logice for forget password to get generate token to the vendor
     async vendorForgetPassword(body: ForgetEmailDto){
         const vendor = await this.vendorModel.findOne({
@@ -69,4 +124,37 @@ export class EmailService {
           } 
 
       }
+
+      //this is to reset the vendor password
+      async resetVendorPassword(input: ResetPasswordDTO) {
+        const vendor = await this.vendorModel.findOne({email:input.email })
+    
+          if (!vendor) {
+            throw new HttpException('check your email spelling', HttpStatus.NOT_FOUND)
+        }
+        if (vendor.resetToken !== input.token || vendor.resetTokenExpiration < new Date()) {
+            throw new Error('inavlid or expired reset token')
+        }
+        
+        if (input.newPassword !== input.confirmedNewPassword) {
+            throw new HttpException('password does not matched', HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+        
+        // vendor.password = await hashed(input.newPassword);
+        const hashChangedPassword= await hashed(input.newPassword);
+
+        if (hashChangedPassword === vendor.password) {
+          throw new HttpException('new password can not be same as old password', HttpStatus.FORBIDDEN)
+        }
+
+        vendor.password = hashChangedPassword
+
+        vendor.resetToken = null;
+        vendor.resetTokenExpiration = null;
+        
+        await vendor.save()
+        return {
+            info: 'password change successfull'
+        }
+    }
 }

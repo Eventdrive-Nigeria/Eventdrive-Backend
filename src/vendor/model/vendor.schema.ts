@@ -17,10 +17,19 @@ export class Vendor{
     @Prop({default: 'activated'})
     status: string
 
-    @Prop({default: true})
+    @Prop({default: null})
     resetToken: string;
 
-    @Prop({type: Date, default: true})
+    @Prop({type: Boolean, default: false})
+    emailConfirmed: boolean;
+
+    @Prop({default: null})
+    emailConfirmedToken: string;
+
+    @Prop({type: Date, default: null})
+    emailTokenExpiration
+
+    @Prop({type: Date, default: null})
     resetTokenExpiration: Date;
 
     @Prop({type: Date, default: Date.now})

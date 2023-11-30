@@ -19,12 +19,14 @@ import { GetUser } from './decorators/getuser.decorator';
 import { VendorService } from 'src/vendor/vendor.service';
 import { CreateVendor } from 'src/vendor/dto/cretateVendor.dto';
 import { LoginVendorDto } from 'src/vendor/dto/login.dto';
+import { EmailService } from './email_auth/email.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private vendorAuthService: VendorService
+    private vendorAuthService: VendorService,
+    private emailService: EmailService
     
     ) {}
 
@@ -61,7 +63,9 @@ export class AuthController {
   }
   @Post('createvendor')
   async registervendor(@Body() input: CreateVendor){
-    return await this.vendorAuthService.registerVendor(input)
+    const vendor= await this.vendorAuthService.registerVendor(input)
+    await this.emailService.sendVendorConfirmation(vendor)
+      return vendor
   }
 
   @Post('loginvendor')
