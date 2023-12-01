@@ -6,27 +6,30 @@ import { Venue } from './schemas/event.schema';
 
 @Injectable()
 export class EventService {
-  constructor(@InjectModel(Venue.name) private venueModel: Model<Venue>,
-    @InjectModel(Venue.name) private vendorModel: Model<Venue>,
+  constructor(@InjectModel(Venue.name) private venueModel: Model<Venue>
   ) { }
 
   async getEvents() {
     try {
-      const venues = await this.venueModel
-        .find({})
-        .populate('vendor', '', this.vendorModel)
-        .exec();
-      if (venues.length <= 0) {
+      const events = await this.venueModel.find({});
+      if (events.length <= 0) {
         return 'nothing has been created yet';
       }
-      return venues;
+      return events;
     } catch (error) {
       console.log(error);
       return error;
     }
   }
-  getEvent(id: string) {
-    return { id };
+  async getEvent(id: string) {
+    try {
+      const event = await this.venueModel.findById({ _id: id });
+      if (!event) return 'no event with the specified id';
+      return event;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
   async createEvent(data: CreateVenueDto) {
     try {
@@ -43,10 +46,24 @@ export class EventService {
       return error;
     }
   }
-  updateEvent(id: string, data: CreateVenueDto) {
-    return { id, data };
+  async updateEvent(id: string, data: CreateVenueDto) {
+    try {
+      const event = await this.venueModel.findByIdAndUpdate(
+        { _id: id },
+        { ...data },
+      );
+      return event;
+    } catch (error) {
+      return error;
+    }
   }
-  deleteEvent(id: string) {
-    return { id };
+  async deleteEvent(id: string) {
+    try {
+      const event = await this.venueModel.findByIdAndDelete({ _id: id });
+      return event;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 }
