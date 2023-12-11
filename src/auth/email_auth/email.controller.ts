@@ -9,9 +9,10 @@ export class EmailController {
     constructor(private emailService: EmailService){}
 
     //vendor confirmed signup email address
-    @Post()
-    async confirmedVendorEmailToken(@Body() input: confirmedVendorEmailDTO){
-       return this.emailService.confirmedVendorEmail(input)
+    @Post('confirmed')
+  async confirmedVendorEmailToken(@Body() input: confirmedVendorEmailDTO):Promise<any>{
+     
+       return await this.emailService.confirmedVendorEmail(input)
     }
 
     //vendor forget password

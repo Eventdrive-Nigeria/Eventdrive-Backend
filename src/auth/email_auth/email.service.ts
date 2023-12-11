@@ -56,10 +56,15 @@ export class EmailService {
           to: vendor.email,
           subject: 'confirmed your email',
           Text: `Click the following link to reset your password: https://yourwebsite.com/reset-password?token=${emailtoken}`
+
+          
       }
+      console.log(`token send to this email ${sendmail.to}`)
+      
       try {
           const info = await this.transporter.sendMail(sendmail);
           return info;
+
         } catch (error) {
           throw new Error(error.message);
         }  
@@ -67,7 +72,8 @@ export class EmailService {
   }
 
   //vendor confirm email 
-  async confirmedVendorEmail(input: confirmedVendorEmailDTO) {
+  async confirmedVendorEmail(input: confirmedVendorEmailDTO):Promise<any> {
+    //console.log(input)
     const vendor  = await this.vendorModel.findOne({email: input.email})
     if (!vendor) {
         throw new HttpException('please check your email address', HttpStatus.NOT_FOUND)
@@ -75,6 +81,11 @@ export class EmailService {
     if (vendor.emailConfirmedToken !== input.confirmedToken || vendor.emailTokenExpiration< new Date()) {
         throw new HttpException('wrong credential or token has expired', HttpStatus.UNPROCESSABLE_ENTITY)
     }
+
+    if (vendor.emailConfirmed === true) {
+      throw new HttpException('your account is already verified', HttpStatus.UNPROCESSABLE_ENTITY)
+    }
+    
     vendor.emailConfirmed = true;
     vendor.emailConfirmedToken = null;
     vendor.emailTokenExpiration = null;

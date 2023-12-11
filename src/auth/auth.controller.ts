@@ -20,6 +20,7 @@ import { VendorService } from 'src/vendor/vendor.service';
 import { CreateVendor } from 'src/vendor/dto/cretateVendor.dto';
 import { LoginVendorDto } from 'src/vendor/dto/login.dto';
 import { EmailService } from './email_auth/email.service';
+import { Vendor } from 'src/vendor/model/vendor.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -61,11 +62,12 @@ export class AuthController {
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.forgotPassword(forgotPasswordDto);
   }
+  
   @Post('createvendor')
   async registervendor(@Body() input: CreateVendor){
     const vendor= await this.vendorAuthService.registerVendor(input)
     await this.emailService.sendVendorConfirmation(vendor)
-      return vendor
+    return vendor
   }
 
   @Post('loginvendor')

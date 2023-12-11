@@ -1,21 +1,50 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { MyRole } from "../enum/business.role";
 
-export type VendorDocument = HydratedDocument<Vendor>
 @Schema()
+export class Location{
+    @Prop({type: String, enum: ['Point']})
+    type: string;
+
+    @Prop({index: '2dsphere'})
+    coordinates: Number[];
+    formattedAddress: string;
+    city: string;
+    state: string;
+    zipcode: string;
+    country: string;
+};
+
+@Schema({timestamps: true})
 export class Vendor{
     @Prop()
-    firstName: string;
-    @Prop()
-    lastName: string;
+    fullName: string;
     @Prop()
     userName: string;
     @Prop()
+    role: string;
+    @Prop()
     email: string;
     @Prop()
+    phoneNumber: string;
+    @Prop()
     password: string;
+
+    @Prop()
+    buinessName: string;
+
+    @Prop({enum: MyRole})
+    myRoleInBusiness: MyRole;
+
+    @Prop()
+    address: string
+
+    @Prop({type: Object, ref: 'Location'})
+    location?: Location
+    
     @Prop({default: 'activated'})
     status: string
+
 
     @Prop({default: null})
     resetToken: string;
@@ -32,8 +61,6 @@ export class Vendor{
     @Prop({type: Date, default: null})
     resetTokenExpiration: Date;
 
-    @Prop({type: Date, default: Date.now})
-    date: Date
 }
 
 export const vendorSchema = SchemaFactory.createForClass(Vendor)

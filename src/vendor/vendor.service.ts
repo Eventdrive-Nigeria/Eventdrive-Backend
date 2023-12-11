@@ -6,6 +6,7 @@ import { CreateVendor } from "./dto/cretateVendor.dto";
 import { LoginVendorDto } from "./dto/login.dto";
 import { JwtService } from "@nestjs/jwt";
 import { hashed } from "src/auth/hashedPassword/password.hashed";
+import APIFeatures from "src/common/locationApi/location.api";
 
 @Injectable()
 export class VendorService {
@@ -15,41 +16,55 @@ export class VendorService {
     private jwtService: JwtService
   ) {}
 
-  async registerVendor(input: CreateVendor) {
+  async registerVendor(input: CreateVendor): Promise<any> {
     try {
       const vendor = await this.vendorModel.findOne({
         $or: [
           { email: input.email },
+
           { userName: input.userName }
         ]
       }).exec();
 
       if (vendor) {
-        throw new HttpException('You already have an account', HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new HttpException(
+          `A restaurant with the email '${input.email}' already exists.
+          check if it's your details
+          business Name: ${vendor.buinessName}, 
+          Owner: ${vendor.fullName}`,
+          HttpStatus.UNPROCESSABLE_ENTITY
+      );
+     //   throw new HttpException('You already have an account', HttpStatus.UNPROCESSABLE_ENTITY);
       }
 
+      input.email = input.email.toLowerCase();
+      input.userName= input.userName.toLowerCase()
+
       input.password = await hashed(input.password);
+      const location = await APIFeatures.getvendortLocation(input.address)
+
+      console.log(location)
 
       const createVendor = await this.vendorModel.create({
-        ...input
+        ...input,
+       location: location
       });
 
-        return await createVendor.save();
+      //const savedvedor = await createVendor.save();
+    
+
+      return createVendor;
+
     } catch (error) {
       throw error || new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async loginvendor(input: LoginVendorDto) {
+   
     try {
       const user = await this.vendorModel.findOne({
-
-          email: input.email
-  
-        // $or: [
-        //   { email: input.email },
-        //   { userName: input.userName },
-        // ],
+          userName: input.userName.toLowerCase()
       }).exec();
 
       if (!user) {
@@ -60,10 +75,10 @@ export class VendorService {
         user: user._id
       };
      
-
       return {
         accessToken: await this.jwtService.signAsync(payload)
       };
+
     } catch (error) {
       throw  error || new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }

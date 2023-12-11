@@ -1,21 +1,44 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MaxLength, MinLength, minLength } from "class-validator";
+import { MyRole } from "../enum/business.role";
 
 export class CreateVendor{
     @IsString()
     @IsNotEmpty()
-    firstName: string;
+    fullName: string;
+
     @IsString()
     @IsNotEmpty()
-    lastName: string;
+    @IsPhoneNumber()
+    @MinLength(11)
+    @MaxLength(20)
+    phoneNumber: string;
+    
+    @IsString()
+    @IsNotEmpty()
+    role: string;
+
     @IsString()
     @IsNotEmpty()
     userName: string;
+    
     @IsString()
     @IsNotEmpty()
     @IsEmail()
     email: string;
+
     @IsString()
     @IsNotEmpty()
     password: string;
-    status?: string
+
+    @IsString()
+    @IsNotEmpty()
+    address: string;
+
+    @IsString()
+    @IsNotEmpty()
+    buinessName: string
+    
+    @IsString()
+    @IsNotEmpty()
+    myRoleInBusiness: MyRole
 }
