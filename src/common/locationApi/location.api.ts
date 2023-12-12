@@ -5,7 +5,7 @@ dotenv.config()
 
 export default class APIFeatures {
 
-    static async getByLocationByMapquest(address1?, address2?){
+    static async getByLocationByMapquest(street, city?){
         try {
             const options = {
                 provider: process.env.GEOCODER_PROVIDER,
@@ -16,7 +16,7 @@ export default class APIFeatures {
             
              const geoCoder = NodeGeocoder(options);
 
-             const loc = await geoCoder.geocode(address1, address2)
+             const loc = await geoCoder.geocode(street, city)
 
              const location: Location = {
                 type: 'Point',

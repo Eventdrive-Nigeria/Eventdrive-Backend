@@ -27,13 +27,12 @@ export class VendorService {
 
       if (vendor) {
         throw new HttpException(
-          `A restaurant with the email '${input.email}' already exists.
+          `A vendor with the email '${input.email}' already exists.
           check if it's your details
           business Name: ${vendor.buinessName}, 
           Owner: ${vendor.fullName}`,
           HttpStatus.UNPROCESSABLE_ENTITY
       );
-     //   throw new HttpException('You already have an account', HttpStatus.UNPROCESSABLE_ENTITY);
       }
 
       input.email = input.email.toLowerCase();
