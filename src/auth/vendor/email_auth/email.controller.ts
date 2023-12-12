@@ -1,8 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { EmailService } from './email.service';
-import { ForgetEmailDto } from './dto/forgetemail.dto';
 import { ResetPasswordDTO } from './dto/resetpasword.dto';
 import { confirmedVendorEmailDTO } from './dto/confirmedvendor.email.dto';
+import { ForgetPasswordDto } from './dto/forgotpassword.dto';
 
 @Controller('email')
 export class EmailController {
@@ -15,14 +15,16 @@ export class EmailController {
        return await this.emailService.confirmedVendorEmail(input)
     }
 
-    //vendor forget password
-  @Post('forgetvendorpassword')
-  async vendorForgePassword(@Body() input: ForgetEmailDto){
-    return await this.emailService.vendorForgetPassword(input)
+    //vendor forgot password
+  @Post('forgotvendorpassword')
+  async vendorForgePassword(@Body() body: ForgetPasswordDto){
+    return await this.emailService.vendorForgetPassword(body)
   }
 
   @Post('resetpasssword')
   resetvendorpassword(@Body() input: ResetPasswordDTO){
      return  this.emailService.resetVendorPassword(input)
  }
+
+
 }

@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -16,11 +17,12 @@ import {
 } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from './decorators/getuser.decorator';
-import { VendorService } from 'src/vendor/vendor.service';
-import { CreateVendor } from 'src/vendor/dto/cretateVendor.dto';
-import { LoginVendorDto } from 'src/vendor/dto/login.dto';
-import { EmailService } from './email_auth/email.service';
-import { Vendor } from 'src/vendor/model/vendor.schema';
+import { VendorService } from './vendor/vendor.service';
+import { EmailService } from './vendor/email_auth/email.service';
+import { CreateVendor } from './vendor/dto/cretateVendor.dto';
+import { LoginVendorDto } from './vendor/dto/login.dto';
+import { VendorChangedPasswordDto } from './vendor/email_auth/dto/changepassword.dto';
+import { Vendor } from './vendor/model/vendor.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -82,5 +84,11 @@ export class AuthController {
     
   }
 
+  @Post('vendorchangedpassword/:id')
+  @UseGuards(AuthGuard('jwt'))
+  vendorchangepassword(@Param('id') id: string, input: VendorChangedPasswordDto){
+   
+    return this.vendorAuthService.vendorchangepassword(id, input)
+  }
  
 }

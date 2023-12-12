@@ -5,7 +5,7 @@ import { User } from '../schemas';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import * as dotenv from 'dotenv';
-import { VendorService } from 'src/vendor/vendor.service';
+import { VendorService } from '../vendor/vendor.service';
 dotenv.config()
 
 @Injectable()
@@ -44,7 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    // Return the user object to be stored in the request object
+    // Return the user and vendor object to be stored in the request object
     return vendor || user;
   }
 }

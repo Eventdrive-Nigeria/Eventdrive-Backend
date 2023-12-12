@@ -5,8 +5,9 @@ import { Model } from "mongoose";
 import { CreateVendor } from "./dto/cretateVendor.dto";
 import { LoginVendorDto } from "./dto/login.dto";
 import { JwtService } from "@nestjs/jwt";
-import { hashed } from "src/auth/hashedPassword/password.hashed";
+import { comparePassword, hashed } from "src/auth/hashedPassword/password.hashed";
 import APIFeatures from "src/common/locationApi/location.api";
+import { VendorChangedPasswordDto } from "./email_auth/dto/changepassword.dto";
 
 @Injectable()
 export class VendorService {
@@ -92,6 +93,38 @@ export class VendorService {
     } catch (error) {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async vendorchangepassword(id: string, input: VendorChangedPasswordDto){
+    const vendor = await this.vendorModel.findById(id);
+    try {
+      if (!vendor) {
+      throw new HttpException('vendor with such id does not exist', HttpStatus.UNPROCESSABLE_ENTITY)
+      }
+
+      if (input.password !==input.confirmedPassword) {
+        throw new HttpException('your password and confirmed password do not matched', HttpStatus.UNPROCESSABLE_ENTITY)
+      }
+
+      if (await comparePassword(input.confirmedOldPassword, vendor.password) === false) {
+        throw new HttpException('your confirmed old password do not matched', HttpStatus.UNPROCESSABLE_ENTITY)
+      }
+
+      input.password = await hashed(input.password)
+
+       await this.vendorModel.findByIdAndUpdate(vendor, input,{
+        new: true,
+        runValidators: true
+    })
+
+    return 'password updated successfully'
+
+    } catch (error) {
+      console.log(error)
+      throw error 
+    }
+
+
   }
 
 }

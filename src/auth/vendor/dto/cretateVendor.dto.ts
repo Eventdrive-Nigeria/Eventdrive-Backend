@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MaxLength, MinLength } from "class-validator";
 import { MyRole } from "../enum/business.role";
-import { BussinessAddress } from "./interface/vendor.address.interface";
+import { BussinessAddress } from "./vendor.address.dto";
 
 export class CreateVendor {
     @IsString()

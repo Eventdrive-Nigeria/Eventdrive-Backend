@@ -2,13 +2,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Vendor } from 'src/vendor/model/vendor.schema';
-import { ForgetEmailDto } from './dto/forgetemail.dto';
 import * as crypto from'crypto'
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDTO } from './dto/resetpasword.dto';
-import { hashed } from '../hashedPassword/password.hashed';
+import { comparePassword, hashed } from '../hashedPassword/password.hashed';
 import { confirmedVendorEmailDTO } from './dto/confirmedvendor.email.dto';
+import { ForgetPasswordDto } from './dto/forgotpassword.dto';
 //import { NodeMailer } from 'src/common/nodemail';
 
 @Injectable()
@@ -98,7 +98,7 @@ export class EmailService {
  }
 
 //logice for forget password to get generate token to the vendor
-    async vendorForgetPassword(body: ForgetEmailDto){
+    async vendorForgetPassword(body: ForgetPasswordDto){
         const vendor = await this.vendorModel.findOne({
           email: body.email
         })
@@ -128,8 +128,8 @@ export class EmailService {
           }
 
           try {
-            const info = await this.transporter.sendMail(emailMessage);
-            return info;
+            await this.transporter.sendMail(emailMessage);
+            return `reset token sent, kindly check your email ${body.email} or spam`;
           } catch (error) {
             throw new Error(error.message);
           } 
@@ -151,12 +151,16 @@ export class EmailService {
             throw new HttpException('password does not matched', HttpStatus.UNPROCESSABLE_ENTITY)
         }
         
+      
+        if (await comparePassword(input.newPassword, vendor.password) === true) {
+          throw new HttpException('new password can not be same as old password', HttpStatus.FORBIDDEN)
+      }
+
+        // if (vendor.password === hashChangedPassword) {
+        //   throw new HttpException('new password can not be same as old password', HttpStatus.FORBIDDEN)
+        // }
         // vendor.password = await hashed(input.newPassword);
         const hashChangedPassword= await hashed(input.newPassword);
-
-        if (hashChangedPassword === vendor.password) {
-          throw new HttpException('new password can not be same as old password', HttpStatus.FORBIDDEN)
-        }
 
         vendor.password = hashChangedPassword
 

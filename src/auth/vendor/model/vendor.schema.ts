@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { MyRole } from "../enum/business.role";
-import { BussinessAddress } from "../dto/interface/vendor.address.interface";
+import { BussinessAddress } from "../dto/vendor.address.dto";
 
 @Schema()
 export class Location{
@@ -24,7 +24,7 @@ export class Vendor{
     userName: string;
     @Prop()
     role: string;
-    @Prop()
+    @Prop({unique: true, required: true, type: String})
     email: string;
     @Prop()
     phoneNumber: string;
