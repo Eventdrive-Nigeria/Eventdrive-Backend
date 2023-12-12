@@ -21,7 +21,6 @@ export class VendorService {
       const vendor = await this.vendorModel.findOne({
         $or: [
           { email: input.email },
-
           { userName: input.userName }
         ]
       }).exec();
@@ -41,16 +40,16 @@ export class VendorService {
       input.userName= input.userName.toLowerCase()
 
       input.password = await hashed(input.password);
-      const location = await APIFeatures.getvendortLocation(input.address)
+      const address = input.bussinessAddress
+      const location = await APIFeatures.getByLocationByMapquest(address.street, address.city)
 
       console.log(location)
 
       const createVendor = await this.vendorModel.create({
         ...input,
-       location: location
+       location: location,
+       bussinessaddress: address
       });
-
-      //const savedvedor = await createVendor.save();
     
 
       return createVendor;

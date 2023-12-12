@@ -1,18 +1,18 @@
-import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MaxLength, MinLength, minLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MaxLength, MinLength } from "class-validator";
 import { MyRole } from "../enum/business.role";
+import { BussinessAddress } from "./interface/vendor.address.interface";
 
-export class CreateVendor{
+export class CreateVendor {
     @IsString()
     @IsNotEmpty()
     fullName: string;
 
-    @IsString()
     @IsNotEmpty()
     @IsPhoneNumber()
     @MinLength(11)
     @MaxLength(20)
     phoneNumber: string;
-    
+
     @IsString()
     @IsNotEmpty()
     role: string;
@@ -20,7 +20,7 @@ export class CreateVendor{
     @IsString()
     @IsNotEmpty()
     userName: string;
-    
+
     @IsString()
     @IsNotEmpty()
     @IsEmail()
@@ -30,15 +30,14 @@ export class CreateVendor{
     @IsNotEmpty()
     password: string;
 
-    @IsString()
     @IsNotEmpty()
-    address: string;
+    bussinessAddress: BussinessAddress; // Fixed the property name
 
     @IsString()
     @IsNotEmpty()
-    buinessName: string
-    
+    buinessName: string; // Fixed the property name
+
     @IsString()
     @IsNotEmpty()
-    myRoleInBusiness: MyRole
+    myRoleInBusiness: MyRole;
 }

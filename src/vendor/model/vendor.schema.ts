@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { MyRole } from "../enum/business.role";
+import { BussinessAddress } from "../dto/interface/vendor.address.interface";
 
 @Schema()
 export class Location{
@@ -36,8 +37,8 @@ export class Vendor{
     @Prop({enum: MyRole})
     myRoleInBusiness: MyRole;
 
-    @Prop()
-    address: string
+    @Prop({type: Object, ref: 'BussinessAddress'})
+    bussinessaddress: BussinessAddress
 
     @Prop({type: Object, ref: 'Location'})
     location?: Location
